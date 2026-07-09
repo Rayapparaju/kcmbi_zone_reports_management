@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Team Leaders - KCMBI{% endblock %}
+{% block page_title %}Team Leaders Personal Data{% endblock %}
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <form method="GET" class="search-form">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" name="q" class="form-control" placeholder="Search team leaders..." value="{{ query }}">
+                    <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+        </div>
+        <a href="{% url 'export_teamleaders_excel' %}" class="btn btn-success"><i class="fas fa-file-excel me-2"></i>Export Excel</a>
+        <a href="{% url 'teamleader_add' %}" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add New Leader</a>
+    </div>
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Cell Number</th>
+                        <th>Zones</th>
+                        <th>KCMBIs</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.name }}</td>
+                        <td>{{ record.email_address }}</td>
+                        <td>{{ record.cell_number }}</td>
+                        <td>{{ record.zones.count }}</td>
+                        <td>{{ record.number_of_kcmbis_submitting }}</td>
+                        <td class="text-center">
+                            <div class="action-btns">
+                                <a href="{% url 'teamleader_detail' record.pk %}" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="{% url 'teamleader_edit' record.pk %}" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i></a>
+                                <a href="{% url 'teamleader_delete' record.pk %}" class="btn btn-sm btn-danger" title="Delete"><i class="fas fa-trash"></i></a>
+                                <a href="{% url 'teamleader_pdf' record.pk %}" class="btn btn-sm btn-success" title="Download PDF"><i class="fas fa-file-pdf"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <i class="fas fa-users fa-3x text-muted mb-3 d-block"></i>
+                            <h5 class="text-muted">No team leaders found</h5>
+                            <a href="{% url 'teamleader_add' %}" class="btn btn-primary mt-2"><i class="fas fa-plus me-2"></i>Add First Leader</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

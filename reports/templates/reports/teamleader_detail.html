@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Record Detail - KCMBI{% endblock %}
+{% block page_title %}Record Details{% endblock %}
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="detail-card">
+        <div class="detail-header">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0"><i class="fas fa-users me-2"></i>Team Leader Personal Data</h4>
+                <div class="action-btns">
+                    <a href="{% url 'teamleader_list' %}" class="btn btn-secondary"><i class="fas fa-arrow-left me-2"></i>Back</a>
+                    <a href="{% url 'teamleader_edit' record.pk %}" class="btn btn-warning"><i class="fas fa-edit me-2"></i>Edit</a>
+                    <a href="{% url 'teamleader_pdf' record.pk %}" class="btn btn-success"><i class="fas fa-file-pdf me-2"></i>PDF</a>
+                    <a href="{% url 'teamleader_delete' record.pk %}" class="btn btn-danger"><i class="fas fa-trash me-2"></i>Delete</a>
+                </div>
+            </div>
+        </div>
+        <div class="detail-body">
+            <table class="table detail-table">
+                <tbody>
+                    <tr>
+                        <th class="label-cell">Name</th>
+                        <td class="value-cell">{{ record.name }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Address</th>
+                        <td class="value-cell">{{ record.address }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Email</th>
+                        <td class="value-cell">{{ record.email_address }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Cell Number</th>
+                        <td class="value-cell">{{ record.cell_number }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Date of Birth</th>
+                        <td class="value-cell">{{ record.date_of_birth }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Bank Name</th>
+                        <td class="value-cell">{{ record.bank_name }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Account Number</th>
+                        <td class="value-cell">{{ record.account_number }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">IFSC Code</th>
+                        <td class="value-cell">{{ record.ifsc_code }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">KCMBIs Submitting</th>
+                        <td class="value-cell">{{ record.number_of_kcmbis_submitting }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            {% with zones=record.zones.all %}
+            {% if zones %}
+            <h5 class="mt-4 mb-3"><i class="fas fa-map-marker-alt me-2"></i>Zones ({{ zones.count }})</h5>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Zone #</th>
+                            <th>Name</th>
+                            <th>Location</th>
+                            <th>Preachers</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for z in zones %}
+                        <tr>
+                            <td>{{ z.zone_number }}</td>
+                            <td>{{ z.zone_name|default:'-' }}</td>
+                            <td>{{ z.location|default:'-' }}</td>
+                            <td>{{ z.preachers.count }}</td>
+                            <td><a href="{% url 'zone_detail' z.pk %}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            {% endwith %}
+            {% with field_reports=record.field_reports.all %}
+            {% if field_reports %}
+            <h5 class="mt-4 mb-3"><i class="fas fa-file-alt me-2"></i>Zone Reports ({{ field_reports.count }})</h5>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Zone</th>
+                            <th>KCMBI #</th>
+                            <th>Date</th>
+                            <th>Topic</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fr in field_reports %}
+                        <tr>
+                            <td>{{ fr.zone.zone_number|default:'-' }}</td>
+                            <td>{{ fr.kcmbi_number }}</td>
+                            <td>{{ fr.meeting_date_time|date:"d M Y" }}</td>
+                            <td>{{ fr.class_topic_or_text|truncatechars:20 }}</td>
+                            <td><a href="{% url 'fieldreport_detail' fr.pk %}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+</div>
+{% endblock %}

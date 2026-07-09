@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }} - KCMBI{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="form-card">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row g-3">
+                {% for field in form %}
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="form-actions mt-4">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save</button>
+                <a href="{% url 'congregation_list' %}" class="btn btn-secondary"><i class="fas fa-times me-2"></i>Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const nameInput = document.getElementById('{{ form.name_of_preacher.id_for_label }}');
+    const zoneSelect = document.getElementById('{{ form.zone.id_for_label }}');
+    if (!nameInput || !zoneSelect) return;
+
+    const container = nameInput.parentElement;
+    container.style.position = 'relative';
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'list-group position-absolute w-100 shadow-sm';
+    dropdown.style.cssText = 'z-index:1000;max-height:200px;overflow-y:auto;display:none;top:100%;left:0;';
+    container.appendChild(dropdown);
+
+    function fetchPreachers(term) {
+        fetch('{% url "autocomplete_preachers" %}?term=' + encodeURIComponent(term || ''))
+            .then(r => r.json())
+            .then(data => {
+                dropdown.innerHTML = '';
+                if (data.length === 0) { dropdown.style.display = 'none'; return; }
+                data.forEach(function(p) {
+                    const item = document.createElement('a');
+                    item.className = 'list-group-item list-group-item-action py-2';
+                    item.href = '#';
+                    item.innerHTML = '<strong>' + p.name_of_preacher + '</strong><br><small class="text-muted">' + (p.team_leader_ref__name ? 'Leader: ' + p.team_leader_ref__name : '') + '</small>';
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        nameInput.value = p.name_of_preacher;
+                        dropdown.style.display = 'none';
+                        if (p.zone__id) {
+                            zoneSelect.value = p.zone__id;
+                        }
+                    });
+                    dropdown.appendChild(item);
+                });
+                dropdown.style.display = 'block';
+            });
+    }
+
+    let debounceTimer;
+
+    nameInput.addEventListener('focus', function() {
+        fetchPreachers(this.value.trim());
+    });
+
+    nameInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function() {
+            fetchPreachers(nameInput.value.trim());
+        }, 300);
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!container.contains(e.target)) dropdown.style.display = 'none';
+    });
+});
+</script>
+{% endblock %}

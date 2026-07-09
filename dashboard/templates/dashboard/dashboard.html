@@ -1,0 +1,423 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard - KCMBI{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    {% if role == 'team_leader' and leader_name %}
+    <div class="welcome-banner mb-4 p-4 rounded-3 text-white" style="background: linear-gradient(135deg, #0d6efd, #6610f2);">
+        <h3 class="mb-1"><i class="fas fa-user-tie me-2"></i>{{ leader_name }}</h3>
+        <p class="mb-0 opacity-75">Team Leader Dashboard</p>
+    </div>
+    {% endif %}
+    {% if role == 'preacher' and preacher_leader_name %}
+    <div class="welcome-banner mb-4 p-4 rounded-3 text-white" style="background: linear-gradient(135deg, #198754, #0d6efd);">
+        <h3 class="mb-1"><i class="fas fa-user-tie me-2"></i>{{ preacher_leader_name }}</h3>
+        <p class="mb-0 opacity-75">My Team Leader</p>
+    </div>
+    {% endif %}
+    <div class="row g-4 mb-4">
+        {% if role != 'preacher' %}
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card card-preachers animate-slide-up">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-label">{% if role == 'team_leader' %}My Team Preachers{% else %}Total Preachers{% endif %}</h6>
+                            <h2 class="card-value">{{ total_preachers }}</h2>
+                        </div>
+                        <div class="card-icon"><i class="fas fa-user-tie"></i></div>
+                    </div>
+                    <a href="{% url 'preacher_list' %}" class="card-link">View Details <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if role == 'admin' %}
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card card-leaders animate-slide-up" style="animation-delay: 0.1s;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-label">Team Leaders</h6>
+                            <h2 class="card-value">{{ total_leaders }}</h2>
+                        </div>
+                        <div class="card-icon"><i class="fas fa-users"></i></div>
+                    </div>
+                    <a href="{% url 'teamleader_list' %}" class="card-link">View Details <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if role != 'preacher' %}
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card card-zones animate-slide-up" style="animation-delay: 0.15s;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-label">{% if role == 'team_leader' %}My Zones{% else %}Total Zones{% endif %}</h6>
+                            <h2 class="card-value">{{ total_zones }}</h2>
+                        </div>
+                        <div class="card-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    </div>
+                    <div class="d-flex gap-2 mt-2">
+                        <a href="{% url 'zone_list' %}" class="card-link">View Details <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif preacher_zone %}
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card card-zones animate-slide-up" style="animation-delay: 0.15s;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-label">My Zone</h6>
+                            <h2 class="card-value">{{ preacher_zone.zone_number }}</h2>
+                            <small class="text-muted">{{ preacher_zone.zone_name|default:'' }}</small>
+                        </div>
+                        <div class="card-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    </div>
+                    <a href="{% url 'zone_detail' preacher_zone.pk %}" class="card-link">View Details <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card card-congregations animate-slide-up" style="animation-delay: 0.2s;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-label">Congregation Updates</h6>
+                            <h2 class="card-value">{{ total_congregations }}</h2>
+                        </div>
+                        <div class="card-icon"><i class="fas fa-place-of-worship"></i></div>
+                    </div>
+                    <a href="{% url 'congregation_list' %}" class="card-link">View Details <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+        {% if role != 'preacher' %}
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card card-reports animate-slide-up" style="animation-delay: 0.3s;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-label">{% if role == 'team_leader' %}My Zone Reports{% else %}Field Reports{% endif %}</h6>
+                            <h2 class="card-value">{{ total_field_reports }}</h2>
+                        </div>
+                        <div class="card-icon"><i class="fas fa-file-alt"></i></div>
+                    </div>
+                    <a href="{% url 'fieldreport_list' %}" class="card-link">View Details <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="row g-4">
+        {% if role == 'team_leader' %}
+        <div class="col-lg-6">
+            <div class="table-card">
+                <div class="table-card-header">
+                    <h5><i class="fas fa-user-tie me-2"></i>My Preachers</h5>
+                    <div>
+                        <button class="btn btn-sm btn-outline-info me-1" onclick="togglePreacherNames()"><i class="fas fa-list me-1"></i>Show Names</button>
+                        <a href="{% url 'preacher_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                </div>
+                <div class="text-center py-4" id="preacherCount">
+                    <span class="display-4 fw-bold text-primary">{{ total_preachers }}</span>
+                    <p class="text-muted mt-2 mb-0">Preachers in your team</p>
+                </div>
+                <div class="table-responsive d-none" id="preacherNames">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Cell</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in recent_preachers %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ p.name_of_preacher|truncatechars:25 }}</td>
+                                <td>{{ p.cell_number }}</td>
+                                <td>
+                                    <a href="{% url 'preacher_detail' p.pk %}" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></a>
+                                    <a href="{% url 'preacher_pdf' p.pk %}" class="btn btn-sm btn-success" title="Download PDF"><i class="fas fa-file-pdf"></i></a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="4" class="text-center text-muted">No records yet</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="table-card">
+                <div class="table-card-header">
+                    <h5><i class="fas fa-map-marker-alt me-2"></i>Zone Wise Preachers</h5>
+                    <a href="{% url 'zone_preachers_excel' %}" class="btn btn-sm btn-success"><i class="fas fa-file-excel me-1"></i>Excel</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Zone</th>
+                                <th>Preacher</th>
+                                <th>Cell</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for z in zones_with_preachers %}
+                                {% for p in z.preachers.all %}
+                                <tr>
+                                    <td>{{ z.zone_number }}</td>
+                                    <td>{{ p.name_of_preacher|truncatechars:25 }}</td>
+                                    <td>{{ p.cell_number }}</td>
+                                    <td>
+                                        <a href="{% url 'preacher_detail' p.pk %}" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></a>
+                                        <a href="{% url 'preacher_pdf' p.pk %}" class="btn btn-sm btn-success" title="Download PDF"><i class="fas fa-file-pdf"></i></a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                {% if forloop.first %}
+                                <tr><td colspan="4" class="text-center text-muted">No preachers assigned yet</td></tr>
+                                {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if role == 'admin' %}
+        <div class="col-lg-6">
+            <div class="table-card">
+                <div class="table-card-header">
+                    <h5><i class="fas fa-user-tie me-2"></i>Recent Preachers</h5>
+                    <a href="{% url 'preacher_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Team Leader</th>
+                                <th>Cell</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in recent_preachers %}
+                            <tr>
+                                <td>{{ p.name_of_preacher|truncatechars:20 }}</td>
+                                <td>{{ p.team_leader_name|truncatechars:15 }}</td>
+                                <td>{{ p.cell_number }}</td>
+                                <td><a href="{% url 'preacher_detail' p.pk %}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a></td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="4" class="text-center text-muted">No records yet</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if role == 'admin' %}
+        <div class="col-lg-6">
+            <div class="table-card">
+                <div class="table-card-header">
+                    <h5><i class="fas fa-users me-2"></i>Team Leaders</h5>
+                    <a href="{% url 'teamleader_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Cell</th>
+                                <th>Zones</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for l in recent_leaders %}
+                            <tr>
+                                <td>{{ l.name|truncatechars:20 }}</td>
+                                <td>{{ l.email_address|truncatechars:20 }}</td>
+                                <td>{{ l.cell_number }}</td>
+                                <td>{{ l.zones.count }}</td>
+                                <td><a href="{% url 'teamleader_detail' l.pk %}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a></td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5" class="text-center text-muted">No records yet</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if role != 'preacher' %}
+        <div class="col-lg-6">
+            <div class="table-card">
+                <div class="table-card-header">
+                    <h5><i class="fas fa-map-marker-alt me-2"></i>Recent Zones</h5>
+                    <a href="{% url 'zone_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Zone #</th>
+                                <th>Name</th>
+                                <th>Team Leader</th>
+                                <th>Preachers</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for z in recent_zones %}
+                            <tr>
+                                <td>{{ z.zone_number }}</td>
+                                <td>{{ z.zone_name|truncatechars:15|default:'-' }}</td>
+                                <td>{{ z.team_leader.name|truncatechars:20 }}</td>
+                                <td>{{ z.preachers.count }}</td>
+                                <td>
+                                    <a href="{% url 'zone_detail' z.pk %}" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></a>
+                                    <a href="{% url 'zone_pdf' z.pk %}" class="btn btn-sm btn-success" title="Download PDF"><i class="fas fa-file-pdf"></i></a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5" class="text-center text-muted">No zones yet</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if role == 'team_leader' and zone_form %}
+        <div class="col-lg-6">
+            <div class="table-card">
+                <div class="table-card-header">
+                    <h5><i class="fas fa-plus-circle me-2"></i>Add New Zone</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="add_zone" value="1">
+                        {{ zone_form.team_leader }}
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <label class="form-label small mb-1">Zone Number</label>
+                                {{ zone_form.zone_number }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small mb-1">Zone Name</label>
+                                {{ zone_form.zone_name }}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <label class="form-label small mb-1">Location</label>
+                                {{ zone_form.location }}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <label class="form-label small mb-1">Description</label>
+                                {{ zone_form.description }}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm mt-1"><i class="fas fa-save me-1"></i>Save Zone</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-lg-6">
+            <div class="table-card">
+                <div class="table-card-header">
+                    <h5><i class="fas fa-place-of-worship me-2"></i>Recent Congregation Updates</h5>
+                    <a href="{% url 'congregation_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Preacher</th>
+                                <th>Village</th>
+                                <th>Month</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in recent_congregations %}
+                            <tr>
+                                <td>{{ c.name_of_preacher|truncatechars:20 }}</td>
+                                <td>{{ c.name_of_village|truncatechars:15 }}</td>
+                                <td>{{ c.month_of_reporting }}</td>
+                                <td><a href="{% url 'congregation_detail' c.pk %}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a></td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="4" class="text-center text-muted">No records yet</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% if role != 'preacher' %}
+        <div class="col-lg-6">
+            <div class="table-card">
+                <div class="table-card-header">
+                    <h5><i class="fas fa-file-alt me-2"></i>{% if role == 'team_leader' %}My Zone Reports{% else %}Recent Field Reports{% endif %}</h5>
+                    <a href="{% url 'fieldreport_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Team Leader</th>
+                                <th>Zone</th>
+                                <th>KCMBI #</th>
+                                <th>Topic</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for f in recent_field_reports %}
+                            <tr>
+                                <td>{{ f.team_leader|truncatechars:20 }}</td>
+                                <td>{{ f.zone.zone_number|default:'-' }}</td>
+                                <td>{{ f.kcmbi_number }}</td>
+                                <td>{{ f.class_topic_or_text|truncatechars:20 }}</td>
+                                <td>
+                                    <a href="{% url 'fieldreport_detail' f.pk %}" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></a>
+                                    <a href="{% url 'fieldreport_pdf' f.pk %}" class="btn btn-sm btn-success" title="Download PDF"><i class="fas fa-file-pdf"></i></a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5" class="text-center text-muted">No records yet</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

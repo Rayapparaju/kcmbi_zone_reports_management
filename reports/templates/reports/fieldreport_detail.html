@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load report_filters %}
+{% block title %}Record Detail - KCMBI{% endblock %}
+{% block page_title %}Record Details{% endblock %}
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="detail-card">
+        <div class="detail-header">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+                <h4 class="mb-0"><i class="fas fa-file-alt me-2"></i>KCMBI Field Report</h4>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'fieldreport_list' %}" class="btn btn-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
+                    <a href="{% url 'fieldreport_edit' record.pk %}" class="btn btn-warning"><i class="fas fa-edit me-1"></i>Edit</a>
+                    <a href="{% url 'fieldreport_pdf' record.pk %}" class="btn btn-success"><i class="fas fa-file-pdf me-1"></i>PDF</a>
+                    <a href="{% url 'fieldreport_delete' record.pk %}" class="btn btn-danger"><i class="fas fa-trash me-1"></i>Delete</a>
+                </div>
+            </div>
+        </div>
+        <div class="detail-body">
+            <table class="table detail-table">
+                <tbody>
+                    <tr>
+                        <th class="label-cell">Team Leader</th>
+                        <td class="value-cell">{{ record.team_leader }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Zone</th>
+                        <td class="value-cell">{{ record.zone.zone_number|default:'N/A' }} {{ record.zone.zone_name|default:'' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Meeting Date</th>
+                        <td class="value-cell">{{ record.meeting_date_time }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">KCMBI Number</th>
+                        <td class="value-cell">{{ record.kcmbi_number }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Topic/Text</th>
+                        <td class="value-cell">{{ record.class_topic_or_text }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Meeting Address</th>
+                        <td class="value-cell">{{ record.meeting_address }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Preachers Attending</th>
+                        <td class="value-cell">
+                            <ol class="mb-0 ps-3">
+                                {% for name in record.preachers_in_attendance|splitlines %}
+                                <li>{{ name|cut:"," }}</li>
+                                {% endfor %}
+                            </ol>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Group Concerns</th>
+                        <td class="value-cell">{{ record.group_concerns }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

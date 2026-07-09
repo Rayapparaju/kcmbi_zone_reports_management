@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}My Profile - KCMBI{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="detail-card" style="max-width: 700px;">
+        <div class="detail-header">
+            <h4 class="mb-0"><i class="fas fa-user-circle me-2"></i>{{ user.username }}</h4>
+        </div>
+        <div class="detail-body">
+            <table class="table detail-table">
+                <tbody>
+                    <tr><th class="label-cell">Username</th><td class="value-cell">{{ user.username }}</td></tr>
+                    <tr><th class="label-cell">Email</th><td class="value-cell">{{ user.email }}</td></tr>
+                    <tr><th class="label-cell">Role</th><td class="value-cell"><span class="badge bg-primary">{{ user.profile.get_role_display }}</span></td></tr>
+                    <tr><th class="label-cell">Date Joined</th><td class="value-cell">{{ user.date_joined|date:"d M Y" }}</td></tr>
+                    <tr><th class="label-cell">Last Login</th><td class="value-cell">{{ user.last_login|date:"d M Y h:i A" }}</td></tr>
+                </tbody>
+            </table>
+            {% if user.profile.role == 'preacher' and user.preacher_profile %}
+            <hr>
+            <h5><i class="fas fa-user-tie me-2"></i>Preacher Profile</h5>
+            <table class="table detail-table">
+                <tbody>
+                    <tr><th class="label-cell">Name</th><td class="value-cell">{{ user.preacher_profile.name_of_preacher }}</td></tr>
+                    <tr><th class="label-cell">Team Leader</th><td class="value-cell">{{ user.preacher_profile.team_leader_name }}</td></tr>
+                    <tr><th class="label-cell">Cell</th><td class="value-cell">{{ user.preacher_profile.cell_number }}</td></tr>
+                </tbody>
+            </table>
+            {% endif %}
+            {% if user.profile.role == 'team_leader' and user.teamleader_profile %}
+            <hr>
+            <h5><i class="fas fa-users me-2"></i>Team Leader Profile</h5>
+            <table class="table detail-table">
+                <tbody>
+                    <tr><th class="label-cell">Name</th><td class="value-cell">{{ user.teamleader_profile.name }}</td></tr>
+                    <tr><th class="label-cell">Cell</th><td class="value-cell">{{ user.teamleader_profile.cell_number }}</td></tr>
+                    <tr><th class="label-cell">KCMBIs</th><td class="value-cell">{{ user.teamleader_profile.number_of_kcmbis_submitting }}</td></tr>
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

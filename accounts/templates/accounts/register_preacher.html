@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Preacher Register - KCMBI{% endblock %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-container" style="max-width: 640px;">
+        <div class="auth-card animate-fade-in">
+            <div class="auth-header text-center">
+                <div class="auth-icon"><i class="fas fa-user-tie"></i></div>
+                <h3>Preacher Registration</h3>
+                <p class="text-muted">Register as a preacher and create your profile</p>
+            </div>
+            <form method="POST" enctype="multipart/form-data" class="auth-form">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Username</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Email</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Password</label>
+                        {{ form.password }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Confirm Password</label>
+                        {{ form.confirm_password }}
+                    </div>
+                    <hr class="my-2"><p class="text-muted small mb-2"><i class="fas fa-info-circle me-1"></i>Personal Details</p>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Full Name (as Preacher)</label>
+                        {{ form.name_of_preacher }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Team Leader Name</label>
+                        {{ form.team_leader_name }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Zone</label>
+                        {{ form.zone }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Cell Number</label>
+                        {{ form.cell_number }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Bank Name</label>
+                        {{ form.bank_name }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Account Number</label>
+                        {{ form.account_number }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">IFSC Code</label>
+                        {{ form.ifsc_code }}
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Preacher Address</label>
+                        {{ form.preacher_address }}
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Congregation Address</label>
+                        {{ form.congregation_address }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Preacher Photo</label>
+                        {{ form.preacher_photo }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Aadhar Card Photo</label>
+                        {{ form.aadhar_card_photo }}
+                    </div>
+                </div>
+                {% if form.non_field_errors %}
+                <div class="text-danger small mb-2">{{ form.non_field_errors|striptags }}</div>
+                {% endif %}
+                <button type="submit" class="btn btn-primary btn-lg w-100 mb-3"><i class="fas fa-user-plus me-2"></i>Register as Preacher</button>
+                <p class="text-center mb-0">Already have an account? <a href="{% url 'login' %}" class="text-primary">Sign In</a></p>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('{{ form.team_leader_name.id_for_label }}');
+    const zoneSelect = document.getElementById('{{ form.zone.id_for_label }}');
+    if (!input) return;
+    const container = input.parentElement;
+    container.style.position = 'relative';
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'list-group position-absolute w-100 shadow-sm';
+    dropdown.style.cssText = 'z-index:1000;max-height:200px;overflow-y:auto;display:none;top:100%;left:0;';
+    container.appendChild(dropdown);
+
+    function fetchLeaders(term) {
+        fetch('{% url "autocomplete_team_leaders" %}?term=' + encodeURIComponent(term || ''))
+            .then(r => r.json())
+            .then(data => {
+                dropdown.innerHTML = '';
+                if (data.length === 0) { dropdown.style.display = 'none'; return; }
+                data.forEach(function(leader) {
+                    const item = document.createElement('a');
+                    item.className = 'list-group-item list-group-item-action py-2';
+                    item.href = '#';
+                    item.innerHTML = '<strong>' + leader.name + '</strong><br><small class="text-muted">' + (leader.cell_number || '') + (leader.cell_number && leader.email_address ? ' &middot; ' : '') + (leader.email_address || '') + '</small>';
+                    item.dataset.leaderId = leader.id;
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        input.value = leader.name;
+                        dropdown.style.display = 'none';
+                        if (zoneSelect) {
+                            fetch('{% url "zones_by_team_leader" %}?leader_id=' + leader.id)
+                                .then(r => r.json())
+                                .then(zones => {
+                                    zoneSelect.innerHTML = '<option value="">---------</option>';
+                                    zones.forEach(function(z) {
+                                        const opt = document.createElement('option');
+                                        opt.value = z.id;
+                                        opt.textContent = z.zone_number + ' - ' + (z.zone_name || '');
+                                        zoneSelect.appendChild(opt);
+                                    });
+                                });
+                        }
+                    });
+                    dropdown.appendChild(item);
+                });
+                dropdown.style.display = 'block';
+            });
+    }
+
+    let debounceTimer;
+
+    input.addEventListener('focus', function() {
+        fetchLeaders(this.value.trim());
+    });
+
+    input.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        const val = this.value.trim();
+        debounceTimer = setTimeout(function() {
+            fetchLeaders(val);
+        }, 300);
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!container.contains(e.target)) dropdown.style.display = 'none';
+    });
+});
+</script>
+{% endblock %}

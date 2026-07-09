@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Record Detail - KCMBI{% endblock %}
+{% block page_title %}Record Details{% endblock %}
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="detail-card">
+        <div class="detail-header">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+                <h4 class="mb-0"><i class="fas fa-user-tie me-2"></i>Preacher Personal Info</h4>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'preacher_list' %}" class="btn btn-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
+                    <a href="{% url 'preacher_edit' record.pk %}" class="btn btn-warning"><i class="fas fa-edit me-1"></i>Edit</a>
+                    <a href="{% url 'preacher_pdf' record.pk %}" class="btn btn-success"><i class="fas fa-file-pdf me-1"></i>PDF</a>
+                    <a href="{% url 'preacher_delete' record.pk %}" class="btn btn-danger"><i class="fas fa-trash me-1"></i>Delete</a>
+                </div>
+            </div>
+        </div>
+        <div class="detail-body">
+            <table class="table detail-table">
+                <tbody>
+                    <tr>
+                        <th class="label-cell">Name of Preacher</th>
+                        <td class="value-cell">{{ record.name_of_preacher }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Zone</th>
+                        <td class="value-cell">{{ record.zone.zone_number|default:'N/A' }} {{ record.zone.zone_name|default:'' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Team Leader</th>
+                        <td class="value-cell">{{ record.team_leader_name }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Cell Number</th>
+                        <td class="value-cell">{{ record.cell_number }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Preacher Address</th>
+                        <td class="value-cell">{{ record.preacher_address }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Congregation Address</th>
+                        <td class="value-cell">{{ record.congregation_address }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Email Address</th>
+                        <td class="value-cell">{{ record.email_address }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Bank Name</th>
+                        <td class="value-cell">{{ record.bank_name }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">Account Number</th>
+                        <td class="value-cell">{{ record.account_number }}</td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">IFSC Code</th>
+                        <td class="value-cell">{{ record.ifsc_code }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

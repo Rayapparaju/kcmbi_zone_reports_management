@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}KCMBI Zone Report Management{% endblock %}
+{% block content %}
+<div class="home-page">
+    <div class="home-hero">
+        <div class="container">
+            <div class="row min-vh-100 align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content animate-fade-in">
+                        <div class="hero-badge mb-3">
+                            <i class="fas fa-church me-2"></i> KCMBI
+                        </div>
+                        <h1 class="hero-title">KCMBI ZONE<br>REPORT MANAGEMENT</h1>
+                        <p class="hero-text">Streamline your church mission reporting with our comprehensive digital platform. Manage preacher information, team data, congregation updates, and field reports all in one place.</p>
+                        <div class="hero-buttons mt-4">
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg me-3">
+                                <i class="fas fa-th-large me-2"></i>Go to Dashboard
+                            </a>
+                            {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-primary btn-lg me-3">
+                                <i class="fas fa-sign-in-alt me-2"></i>login
+                            </a>
+                            <a href="{% url 'register_preacher' %}" class="btn btn-outline-light btn-lg me-2">
+                                <i class="fas fa-user-tie me-2"></i>Preacher
+                            </a>
+                            <a href="{% url 'register_teamleader' %}" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-users me-2"></i>Team Leader
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-illustration animate-slide-up">
+                        <div class="floating-card card-1">
+                            <i class="fas fa-user-tie fa-2x text-primary"></i>
+                            <span>Preachers</span>
+                        </div>
+                        <div class="floating-card card-2">
+                            <i class="fas fa-users fa-2x text-success"></i>
+                            <span>Team Leaders</span>
+                        </div>
+                        <div class="floating-card card-3">
+                            <i class="fas fa-place-of-worship fa-2x text-warning"></i>
+                            <span>Congregations</span>
+                        </div>
+                        <div class="floating-card card-4">
+                            <i class="fas fa-file-alt fa-2x text-info"></i>
+                            <span>Field Reports</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="features-section py-5">
+        <div class="container">
+            <h2 class="text-center mb-5 section-title">Key Features</h2>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-download"></i></div>
+                        <h5>PDF Export</h5>
+                        <p>Download professional A4 PDF reports for every record.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-search"></i></div>
+                        <h5>Smart Search</h5>
+                        <p>Quickly find any record with powerful search.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-image"></i></div>
+                        <h5>Photo Upload</h5>
+                        <p>Upload and manage photos for every record.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+                        <h5>Dashboard</h5>
+                        <p>Comprehensive analytics and insights.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="home-footer text-center py-3">
+        <p class="mb-0">&copy; 2026 KCMBI Church of Christ. All rights reserved.</p>
+    </footer>
+</div>
+{% endblock %}

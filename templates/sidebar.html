@@ -1,0 +1,95 @@
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h4><i class="fas fa-church me-2"></i>KCMBI ZONE REPORT</h4>
+        <button class="btn btn-sm text-white d-lg-none" onclick="toggleSidebar()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="sidebar-user">
+        <div class="avatar-circle">
+            <span>{{ user.username|first|upper }}</span>
+        </div>
+        <div class="user-info">
+            <span class="user-name">{{ user.username }}</span>
+            <span class="user-role">{{ user.profile.get_role_display }}</span>
+        </div>
+    </div>
+    <ul class="sidebar-nav">
+        <li class="nav-item">
+            <a href="{% url 'dashboard' %}" class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}">
+                <i class="fas fa-th-large"></i><span>Dashboard</span>
+            </a>
+        </li>
+        {% if user.profile.role != 'preacher' %}
+        <li class="nav-item">
+            <a href="{% url 'zone_list' %}" class="nav-link {% if 'zone' in request.path %}active{% endif %}">
+                <i class="fas fa-map-marker-alt"></i><span>Zones</span>
+            </a>
+        </li>
+        {% endif %}
+        <li class="nav-item nav-header">Reports</li>
+        {% if user.profile.role != 'preacher' %}
+        <li class="nav-item">
+            <a href="{% url 'preacher_list' %}" class="nav-link {% if 'preacher' in request.path %}active{% endif %}">
+                <i class="fas fa-user-tie"></i><span>Preachers</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if user.profile.role == 'admin' %}
+        <li class="nav-item">
+            <a href="{% url 'teamleader_list' %}" class="nav-link {% if 'teamleader' in request.path %}active{% endif %}">
+                <i class="fas fa-users"></i><span>Team Leaders</span>
+            </a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+            <a href="{% url 'congregation_list' %}" class="nav-link {% if 'congregation' in request.path %}active{% endif %}">
+                <i class="fas fa-place-of-worship"></i><span>Congregations</span>
+            </a>
+        </li>
+        {% if user.profile.role != 'preacher' %}
+        <li class="nav-item">
+            <a href="{% url 'fieldreport_list' %}" class="nav-link {% if 'fieldreport' in request.path %}active{% endif %}">
+                <i class="fas fa-file-alt"></i><span>{% if user.profile.role == 'team_leader' %}Zone Reports{% else %}Field Reports{% endif %}</span>
+            </a>
+        </li>
+        {% endif %}
+        <li class="nav-item nav-header">Account</li>
+        <li class="nav-item">
+            <a href="{% url 'profile' %}" class="nav-link">
+                <i class="fas fa-user-circle"></i><span>My Profile</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'logout' %}" class="nav-link text-danger">
+                <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<nav class="top-navbar">
+    <div class="d-flex align-items-center">
+        <button class="btn btn-link text-white me-3" onclick="toggleSidebar()">
+            <i class="fas fa-bars fa-lg"></i>
+        </button>
+        <h5 class="mb-0">{% block page_title %}Dashboard{% endblock %}</h5>
+    </div>
+    <div class="d-flex align-items-center">
+        <span class="text-white-50 me-3">
+            <i class="fas fa-calendar-alt me-1"></i>{% now "d M Y" %}
+        </span>
+        <div class="dropdown">
+            <button class="btn btn-link text-white dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="fas fa-user-circle fa-lg me-1"></i>{{ user.username }}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{% url 'dashboard' %}"><i class="fas fa-th-large me-2"></i>Dashboard</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
